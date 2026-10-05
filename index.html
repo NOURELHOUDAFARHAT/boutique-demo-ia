@@ -243,7 +243,24 @@ header{
 .totals .big span:last-child{font-family:var(--font-mono)}
 .pays{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 10px}
 .pay{border:1px solid var(--line);border-radius:8px;padding:11px 6px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);background:var(--paper);cursor:not-allowed}
-.note{background:var(--accent-soft);border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.5}
+.note{
+  background:#e8f1ff;
+  color:#24344d;
+  border:1px solid #a9c2e8;
+  border-radius:10px;
+  padding:12px 14px;
+  font-size:12.5px;
+  line-height:1.55;
+}
+.note b{color:#102a52;font-weight:800}
+.payment-note{margin-top:14px;box-shadow:0 5px 16px rgba(36,52,77,.08)}
+:root[data-theme="dark"] .note{
+  background:#203d3a;
+  color:#e8fff6;
+  border-color:#397c68;
+  box-shadow:0 5px 16px rgba(0,0,0,.2);
+}
+:root[data-theme="dark"] .note b{color:#ffffff}
 .empty{color:var(--muted);font-size:14px;padding:22px 0;text-align:center}
 
 .colophon{max-width:1180px;margin:0 auto;padding:26px 16px 44px;border-top:1px solid var(--line)}
