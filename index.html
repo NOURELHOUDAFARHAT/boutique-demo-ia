@@ -532,7 +532,10 @@ function openProduct(id){
       `<button class="opt" aria-pressed="${i===0}" data-v="${v}">${v}</button>`).join("")}</div>`:""}
     <button class="primary" id="addBtn" ${p.stock===0?"disabled":""}>
       ${p.stock===0?"Épuisé — réapprovisionnement en cours":"Ajouter au panier · "+euros(p.prix)}
-    </button>`);
+    </button>
+    <div class="note payment-note"><b>Démonstration.</b> Les moyens de paiement sont désactivés et la page ne demande
+    aucune donnée bancaire. Dans une boutique réelle, ce bouton ouvrirait une session Stripe Checkout créée
+    côté serveur, jamais un formulaire de carte hébergé par la page.</div>`);
   const opts=s.querySelector("#opts");
   if(opts) opts.addEventListener("click",e=>{
     const b=e.target.closest(".opt"); if(!b) return;
