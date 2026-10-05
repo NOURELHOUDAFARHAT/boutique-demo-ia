@@ -22,6 +22,7 @@
   --font-body:"Figtree","Helvetica Neue",Arial,sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
   --r:10px;
+  --glow:rgba(15,92,63,.18);
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
@@ -58,6 +59,8 @@ body{
   margin:0;background:var(--paper);color:var(--ink);
   font-family:var(--font-body);font-size:15px;line-height:1.5;
   -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 8% 10%,var(--accent-soft),transparent 27rem);
+  transition:background .35s ease,color .35s ease;
 }
 h1,h2,h3{text-wrap:balance;margin:0}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -79,6 +82,12 @@ header{
 .brand{font-family:var(--font-display);font-weight:800;font-size:21px;letter-spacing:-.02em;line-height:1}
 .brand span{color:var(--accent)}
 .navspace{flex:1}
+.theme-tools{display:flex;align-items:center;gap:6px}
+.theme-dot{width:19px;height:19px;border:2px solid var(--surface);outline:1px solid var(--line);border-radius:50%;padding:0}
+.theme-dot[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px}
+.theme-dot[data-theme-color="green"]{background:#0f5c3f}.theme-dot[data-theme-color="orange"]{background:#d65a31}
+.theme-dot[data-theme-color="blue"]{background:#2667c9}.theme-dot[data-theme-color="violet"]{background:#7d4ac7}
+.theme-toggle{padding:6px 9px!important;font-size:16px!important}
 .ghost{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:500}
 .ghost:hover{border-color:var(--accent);color:var(--accent)}
 .cartbtn{display:flex;align-items:center;gap:7px}
@@ -106,10 +115,13 @@ header{
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:16px}
 .card{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;
-  transition:border-color .15s,transform .15s;min-width:0;
+  position:relative;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--lift,0px));
+  box-shadow:0 12px 30px var(--glow);transition:border-color .2s,transform .2s,box-shadow .2s;min-width:0;
 }
-.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card:hover{border-color:var(--accent);--lift:-7px;box-shadow:0 22px 42px var(--glow)}
+.card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.2),transparent 65%);transform:translateX(-120%);transition:transform .5s ease}
+.card:hover::after{transform:translateX(120%)}
 .thumb{aspect-ratio:4/3;width:100%;max-width:100%;display:block;background:var(--accent-soft)}
 .product-photo{object-fit:cover;object-position:center}
 .cbody{padding:12px 13px 14px;display:flex;flex-direction:column;gap:5px;flex:1}
@@ -124,6 +136,7 @@ header{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
   display:flex;flex-direction:column;overflow:hidden;
   position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);max-height:calc(100vh - 120px);
+  box-shadow:0 18px 42px var(--glow);
 }
 @media (max-width:940px){.assistant{position:static;max-height:none;margin-top:30px}}
 .ahead{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
@@ -190,6 +203,12 @@ header{
 .col li{margin-bottom:3px}
 .src{font-size:12px;color:var(--muted);margin-top:20px;padding-top:14px;border-top:1px solid var(--line)}
 .src a{color:var(--accent)}
+.ball-cursor{position:fixed;z-index:100;pointer-events:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;opacity:0;transform:translate(-50%,-50%);transition:opacity .2s,scale .2s;filter:drop-shadow(0 6px 10px var(--glow))}
+.ball-cursor::before{content:"";width:27px;height:27px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);box-shadow:inset 0 0 0 5px var(--accent-soft)}
+.ball-cursor::after{content:"";position:absolute;width:8px;height:8px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+.ball-cursor.is-active{opacity:1;scale:1.18}
+@media (pointer:coarse){.ball-cursor{display:none}}
+@media (prefers-reduced-motion:reduce){.card{transform:none!important;transition:none}.ball-cursor{display:none}}
 </style>
 
 <div class="banner">Démonstration technique &mdash; boutique fictive, <b>aucun paiement réel n'est traité</b></div>
@@ -198,6 +217,13 @@ header{
   <div class="hwrap">
     <div class="brand">LUCARNE<span>.</span></div>
     <div class="navspace"></div>
+    <div class="theme-tools" aria-label="Personnaliser les couleurs">
+      <button class="theme-dot" data-theme-color="green" aria-label="Palette verte" aria-pressed="true"></button>
+      <button class="theme-dot" data-theme-color="orange" aria-label="Palette orange" aria-pressed="false"></button>
+      <button class="theme-dot" data-theme-color="blue" aria-label="Palette bleue" aria-pressed="false"></button>
+      <button class="theme-dot" data-theme-color="violet" aria-label="Palette violette" aria-pressed="false"></button>
+      <button class="ghost theme-toggle" id="themeToggle" type="button" aria-label="Changer le mode clair ou sombre">◐</button>
+    </div>
     <button class="ghost cartbtn" id="cartOpen" aria-label="Ouvrir le panier">
       Panier <span class="pill" id="cartCount">0</span>
     </button>
@@ -278,6 +304,8 @@ header{
   <a href="https://www.decathlon.fr/tous-les-sports/football/ballons-de-football" target="_blank" rel="noopener">Decathlon</a>
   en octobre 2026, et utilisés ici à titre de jeu de données. Les photos sont des visuels d'illustration libres d'accès&nbsp;; elles ne reproduisent pas nécessairement le modèle exact vendu.</p>
 </section>
+
+<div class="ball-cursor" id="ballCursor" aria-hidden="true"></div>
 
 <script type="application/ld+json" id="ld"></script>
 
@@ -396,6 +424,20 @@ function renderGrid(){
         <div class="cfoot"><span class="price">${euros(p.prix)}</span>${stockLabel(p)}</div>
       </div>
     </button>`).join("");
+  enhanceCards();
+}
+function enhanceCards(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  el("grid").querySelectorAll(".card").forEach(card=>{
+    card.addEventListener("pointermove",e=>{
+        const r=card.getBoundingClientRect();
+        card.style.setProperty("--ry",`${((e.clientX-r.left)/r.width-.5)*7}deg`);
+        card.style.setProperty("--rx",`${-((e.clientY-r.top)/r.height-.5)*7}deg`);
+    });
+    card.addEventListener("pointerleave",()=>{
+        card.style.removeProperty("--rx"); card.style.removeProperty("--ry");
+    });
+  });
 }
 function renderCount(){ el("cartCount").textContent = cart.reduce((n,l)=>n+l.q,0); }
 
@@ -645,7 +687,34 @@ async function envoyer(texte){
   }
 }
 
+/* ===== personnalisation visuelle ===== */
+const PALETTES = {
+  green:{accent:"#0f5c3f",soft:"#e2efe8",on:"#ffffff",glow:"rgba(15,92,63,.18)"},
+  orange:{accent:"#d65a31",soft:"#fbe7df",on:"#ffffff",glow:"rgba(214,90,49,.2)"},
+  blue:{accent:"#2667c9",soft:"#e4edff",on:"#ffffff",glow:"rgba(38,103,201,.2)"},
+  violet:{accent:"#7d4ac7",soft:"#eee7fb",on:"#ffffff",glow:"rgba(125,74,199,.2)"}
+};
+function applyPalette(name){
+  const palette=PALETTES[name]||PALETTES.green;
+  const root=document.documentElement;
+  root.style.setProperty("--accent",palette.accent);
+  root.style.setProperty("--accent-soft",palette.soft);
+  root.style.setProperty("--on-accent",palette.on);
+  root.style.setProperty("--glow",palette.glow);
+  document.querySelectorAll(".theme-dot").forEach(b=>b.setAttribute("aria-pressed",b.dataset.themeColor===name));
+  try{localStorage.setItem("lucarne_palette",name)}catch(e){}
+}
+function applySavedAppearance(){
+  let palette="green";
+  try{palette=localStorage.getItem("lucarne_palette")||palette}catch(e){}
+  applyPalette(palette);
+  let theme;
+  try{theme=localStorage.getItem("lucarne_theme")}catch(e){}
+  if(theme) document.documentElement.dataset.theme=theme;
+}
+
 /* ===== amorçage ===== */
+applySavedAppearance();
 renderFilters(); renderGrid(); renderCount(); renderSugg();
 
 el("ld").textContent = JSON.stringify({
@@ -672,7 +741,25 @@ el("ask").addEventListener("submit",e=>{
   e.preventDefault();
   const v=el("q").value; el("q").value=""; envoyer(v);
 });
+document.querySelectorAll(".theme-dot").forEach(button=>{
+  button.addEventListener("click",()=>applyPalette(button.dataset.themeColor));
+});
+el("themeToggle").addEventListener("click",()=>{
+  const root=document.documentElement;
+  const theme=root.dataset.theme==="dark"?"light":"dark";
+  root.dataset.theme=theme;
+  try{localStorage.setItem("lucarne_theme",theme)}catch(e){}
+});
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePanel(); });
+
+const ballCursor=el("ballCursor");
+if(ballCursor && !window.matchMedia("(pointer: coarse)").matches){
+  document.addEventListener("pointermove",e=>{
+    ballCursor.style.left=`${e.clientX}px`;
+    ballCursor.style.top=`${e.clientY}px`;
+    ballCursor.classList.toggle("is-active",!!e.target.closest("button,a,input"));
+  });
+}
 
 (async ()=>{
   try{ sample = await window.claude?.use?.("sample"); }catch(e){ sample=null; }

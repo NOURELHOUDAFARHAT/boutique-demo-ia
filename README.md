@@ -9,6 +9,8 @@ commande et d'ajouter lui-même au panier.
 ## Ce que ça fait
 
 - Catalogue filtrable de 9 références, variantes, tailles et état du stock
+- Interface responsive avec cartes flottantes, interactions au survol et palettes
+  de couleurs persistantes
 - Fiches produits, panier persistant par visiteur, tunnel jusqu'au récapitulatif
 - Assistant conversationnel avec **appel d'outils** : le modèle décide quand
   appeler `rechercher_produits`, `suivre_commande` ou `ajouter_au_panier`,
