@@ -103,7 +103,25 @@ header{
 }
 @media (max-width:940px){.shell{grid-template-columns:1fr;gap:0}}
 
-.hero{margin-bottom:24px}
+.hero{margin-bottom:24px;position:relative;isolation:isolate}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:-1;filter:blur(2px)}
+.hero::before{width:210px;height:210px;right:12%;top:-60px;background:var(--accent-soft);opacity:.72;animation:drift 8s ease-in-out infinite}
+.hero::after{width:90px;height:90px;right:4%;bottom:-20px;border:1px solid var(--accent);opacity:.18;animation:drift 6s ease-in-out infinite reverse}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:20px;align-items:end}
+.hero-copy{padding:10px 0}
+.hero-art{min-height:178px;border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));border-radius:24px;background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#111));color:var(--on-accent);padding:18px;position:relative;overflow:hidden;box-shadow:0 22px 55px var(--glow);transform:rotate(2deg);animation:cardFloat 6s ease-in-out infinite}
+.hero-art::before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;border:1px solid rgba(255,255,255,.35);right:-55px;top:-42px;box-shadow:0 0 0 18px rgba(255,255,255,.08),0 0 0 38px rgba(255,255,255,.05)}
+.hero-art::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 22%,rgba(255,255,255,.22) 48%,transparent 70%);transform:translateX(-120%);animation:shine 5s ease-in-out infinite}
+.hero-art-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+.hero-art-title{font-family:var(--font-display);font-size:25px;font-weight:800;line-height:.95;max-width:8ch;letter-spacing:-.04em;margin-top:32px;position:relative;z-index:1}
+.hero-art-meta{position:absolute;bottom:15px;right:17px;font-family:var(--font-mono);font-size:10px;opacity:.8}
+.hero-art-ball{position:absolute;right:28px;top:38px;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 8%,transparent 9%),var(--surface);box-shadow:inset -10px -9px 0 rgba(0,0,0,.12),0 10px 18px rgba(0,0,0,.2);transform:rotate(-18deg);animation:ballSpin 7s linear infinite}
+.hero-art-ball::after{content:"";position:absolute;inset:26px;border:5px solid var(--accent);transform:rotate(22deg);clip-path:polygon(50% 0,100% 25%,82% 100%,18% 100%,0 25%)}
+@keyframes drift{50%{transform:translate(12px,14px)}}
+@keyframes cardFloat{50%{transform:rotate(0deg) translateY(-7px)}}
+@keyframes shine{0%,35%{transform:translateX(-120%)}65%,100%{transform:translateX(120%)}}
+@keyframes ballSpin{to{transform:rotate(342deg)}}
+@media (max-width:700px){.hero-layout{grid-template-columns:1fr}.hero-art{min-height:145px}.hero-art-title{margin-top:22px}}
 .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
 .hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(27px,4.6vw,40px);line-height:1.05;letter-spacing:-.025em}
 .hero p{color:var(--muted);max-width:54ch;margin:11px 0 0}
@@ -120,6 +138,11 @@ header{
   box-shadow:0 12px 30px var(--glow);transition:border-color .2s,transform .2s,box-shadow .2s;min-width:0;
 }
 .card:hover{border-color:var(--accent);--lift:-7px;box-shadow:0 22px 42px var(--glow)}
+.card-tag{position:absolute;top:10px;left:10px;z-index:2;background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(8px);border:1px solid color-mix(in srgb,var(--line) 70%,transparent);border-radius:999px;padding:4px 8px;font:500 10px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.card:nth-child(3n+1){animation:cardFloat 7s ease-in-out -2s infinite}
+.card:nth-child(3n+2){animation:cardFloat 8s ease-in-out -5s infinite}
+.card:nth-child(3n){animation:cardFloat 9s ease-in-out -7s infinite}
+.card:hover{animation-play-state:paused}
 .card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.2),transparent 65%);transform:translateX(-120%);transition:transform .5s ease}
 .card:hover::after{transform:translateX(120%)}
 .thumb{aspect-ratio:4/3;width:100%;max-width:100%;display:block;background:var(--accent-soft)}
@@ -208,7 +231,7 @@ header{
 .ball-cursor::after{content:"";position:absolute;width:8px;height:8px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
 .ball-cursor.is-active{opacity:1;scale:1.18}
 @media (pointer:coarse){.ball-cursor{display:none}}
-@media (prefers-reduced-motion:reduce){.card{transform:none!important;transition:none}.ball-cursor{display:none}}
+@media (prefers-reduced-motion:reduce){.card,.hero-art,.hero::before,.hero::after,.hero-art::after,.hero-art-ball{animation:none!important;transform:none!important}.card{transition:none}.ball-cursor{display:none}}
 </style>
 
 <div class="banner">Démonstration technique &mdash; boutique fictive, <b>aucun paiement réel n'est traité</b></div>
@@ -233,9 +256,19 @@ header{
 <div class="shell">
   <main>
     <section class="hero">
-      <div class="eyebrow">Équipement football &middot; club &amp; compétition</div>
-      <h1>Le matériel qui tient la saison.</h1>
-      <p>Ballons homologués, gants de gardien et équipement de club. Expédition en 48&nbsp;h, retours gratuits sous 30&nbsp;jours.</p>
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <div class="eyebrow">Équipement football &middot; club &amp; compétition</div>
+          <h1>Le matériel qui tient la saison.</h1>
+          <p>Ballons homologués, gants de gardien et équipement de club. Expédition en 48&nbsp;h, retours gratuits sous 30&nbsp;jours.</p>
+        </div>
+        <div class="hero-art" aria-label="Collection matchday 2026">
+          <div class="hero-art-label">Matchday / 26</div>
+          <div class="hero-art-ball" aria-hidden="true"></div>
+          <div class="hero-art-title">Play<br>with intent.</div>
+          <div class="hero-art-meta">LUCARNE STUDIO</div>
+        </div>
+      </div>
     </section>
 
     <div class="filters" id="filters" role="group" aria-label="Filtrer le catalogue"></div>
@@ -416,7 +449,8 @@ function stockLabel(p){
 function renderGrid(){
   const list = filtre==="Tout" ? CAT : CAT.filter(p=>p.cat===filtre);
   el("grid").innerHTML = list.map(p=>`
-    <button class="card" data-id="${p.id}">
+    <button class="card" data-id="${p.id}" style="--delay:${list.indexOf(p)*55}ms">
+      <span class="card-tag">${p.cat}</span>
       ${productVisual(p)}
       <div class="cbody">
         <div class="cbrand">${p.marque}</div>
