@@ -13,13 +13,13 @@ commande et d'ajouter lui-même au panier.
 - Assistant conversationnel avec **appel d'outils** : le modèle décide quand
   appeler `rechercher_produits`, `suivre_commande` ou `ajouter_au_panier`,
   et l'ajout au panier modifie réellement l'état de l'application
-- Données structurées JSON-LD `Product` pour le référencement
+- Données structurées JSON-LD `Product` pour le référencement, avec URL d'image
 
 ## Pile technique
 
 Aucune. Une seule page HTML, sans framework ni dépendance hormis les polices
-Google. Illustrations produits dessinées en SVG, donc zéro requête réseau pour
-les images et un premier rendu immédiat.
+Google. Les fiches produits utilisent des photos d'illustration distantes
+chargées depuis Unsplash, avec un fallback SVG si une image est indisponible.
 
 ## Les deux versions
 
